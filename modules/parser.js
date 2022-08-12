@@ -1,6 +1,6 @@
+import { text } from './textSource.js';
+import { listCreature } from './textSource.js';
 let regArr = [];
-let listCreature = getListCreature();
-let text = getText();
 listCreature.forEach(e => regArr.push(new RegExp(`${e}`)));
 let fragmentTxt = []
 for (let i = 0; i < listCreature.length; i++) {
