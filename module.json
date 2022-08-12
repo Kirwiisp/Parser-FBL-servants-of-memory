@@ -1,0 +1,36 @@
+{
+    "name": "FBL-Servants-of-memory-npc-parser",
+    "title": "FBL The Servants of Memory NPC Parser",
+    "description": "Creates  NPCs adversary.",
+    "authors": [
+        "Kirwiisp"
+    ],
+    "url": "https://github.com/Kirwiisp/Parser-FBL-servants-of-mystery",
+    "flags": {},
+    "version": "0.0.1",
+    "minimumCoreVersion": "9.000",
+    "compatibleCoreVersion": "9.269",
+    "scripts": [],
+    "esmodules": [
+        "modules/parser.js"
+    ],
+    "styles": [],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ],
+    "packs": [],
+    "system": [
+        "forbidden-lands"
+    ],
+    "dependencies": [],
+    "socket": false,
+    "manifest": "",
+    "download": "",
+    "protected": false,
+    "coreTranslation": false,
+    "library": false
+}
