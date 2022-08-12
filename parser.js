@@ -1,5 +1,4 @@
-let text =
- ;
+let text = ``;
 let regArr = [];
 let list = [];
 list.forEach(e => regArr.push(new RegExp(`${e}`)));
