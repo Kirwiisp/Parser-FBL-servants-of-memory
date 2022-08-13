@@ -6,7 +6,7 @@ let regArr = [];
 listOfCreatures.forEach(e => regArr.push(new RegExp(`${e}\n`)));
 
 // creating an array with creatureTemplate{} to contain txt,translated text, name, stats,etc... 
-let txtByCreatureArray = [];
+
 let creatureTemplate = {
     text: ``,
     translatedText: ``,
@@ -27,37 +27,62 @@ let creatureTemplate = {
 };
 
 // function to get Creature's name at i index
-let getName = (i) => regArr[i].toString().replace(/\/|\\n/g, "");
-
-// function to get index of Creature in listOfCreatures
-let getCreatureIndex = (creatureName) => listOfCreatures.indexOf(creatureName);
-
-//function to get next creature name in the listOfCreature
-let getNextCreatureName = (creatureName) => {
-    let index = listOfCreatures.indexOf(creatureName) + 1;
-    return getName(index);
-};
+let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n/g, "");
 
 //function to get Creature RegExp
 let getCreatureRegExp = (creatureName) => regArr[getCreatureIndex(creatureName)];
 
+// function to get index of Creature in listOfCreatures
+let getCreatureIndex = (creatureName) => listOfCreatures.indexOf(creatureName);
+
+//function to get Next creature RegExp
+let getNextRegExpCreature = (creatureRegExp) => regArr[regArr.indexOf(creatureRegExp) + 1];
+
 //function to get creature text
-let getCreatureText = (creatureName, sourceText) => {
-    let start = sourceText.search(getCreatureRegExp(creatureName));
+let getCreatureText = (creatureRegExp, sourceText) => {
+    let start = sourceText.search(creatureRegExp);
     //handeling last creature Case
-    if (getCreatureIndex(creatureName) == listOfCreatures.length - 1) return sourceText.slice(start);
-    let end = sourceText.search(getCreatureRegExp(getNextCreatureName(creatureName)));
+    if (regArr.indexOf(creatureRegExp) == listOfCreatures.length - 1) return sourceText.slice(start);
+    let end = sourceText.search(getNextRegExpCreature(creatureRegExp));
 
     return sourceText.slice(start, end);
 };
 
+//RegExp of attibutes 
+let attributesReg = /ATTRIBUTES:/;
+let strReg = /(?<=STRENGTH )\d+/;
+let agiReg = /(?<=AGILITY )\d+/;
+let witReg = /(?<=WITS )\d+/;
+let empReg = /(?<=EMPATHY)\d+/;
+
+//function to get attribute 
+let getAttribute = (reg, txt) => {
+    txt = txt.slice(txt.search(attributesReg));
+    let resp = txt.match(reg);
+    if (!resp) resp = 0;
+    return parseInt(resp);
+};
 
 
-let creatureTest = getName(68);
-console.log(creatureTest);
-let textTemp = getCreatureText(creatureTest, text);
-console.log(textTemp);
+//fill textByCreatureArray
+let creatureTable = [];
+regArr.forEach(e => {
+    let creature = Object.create(creatureTemplate);
+    creature.name = textOfRegExp(e);
+    creature.text = getCreatureText(e, text);
+    let descStartReg = new RegExp(`(?<=${textOfRegExp(e)})`);
+    creature.description = creature.text.slice(creature.text.search(descStartReg), creature.text.search(attributesReg));
+    creature.attributes.strength = getAttribute(strReg, creature.text);
+    creature.attributes.agility = getAttribute(agiReg, creature.text);
+    creature.attributes.wits = getAttribute(witReg, creature.text);
+    creature.attributes.empathy = getAttribute(empReg, creature.text);
+    creatureTable.push(creature);
+});
 
+console.log(creatureTable[0].description);
+
+
+/*
 for (let i = 0; i < listOfCreatures.length; i++) {
     if (i == listOfCreatures.length - 1) {
         txtByCreatureArray.push(text.slice(text.search(regArr[i]),));
@@ -65,3 +90,4 @@ for (let i = 0; i < listOfCreatures.length; i++) {
     }
     txtByCreatureArray.push(text.slice(text.search(regArr[i]), text.search(regArr[i + 1])));
 }
+*/
