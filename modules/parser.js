@@ -3,7 +3,7 @@ import { listOfCreatures } from './textSource.js';
 
 // creating an array of RegExp for creatures segments
 let regArr = [];
-listOfCreatures.forEach(e => regArr.push(new RegExp(`${e}`)));
+listOfCreatures.forEach(e => regArr.push(new RegExp(`${e}\n`)));
 
 // creating an array with creatureTemplate{} to contain txt,translated text, name, stats,etc... 
 let txtByCreatureArray = [];
@@ -26,22 +26,37 @@ let creatureTemplate = {
     notes: ``
 };
 
-//function to get next creature name in the listOfCreature
+// function to get Creature's name at i index
+let getName = (i) => regArr[i].toString().replace(/\/|\\n/g, "");
 
+// function to get index of Creature in listOfCreatures
+let getCreatureIndex = (creatureName) => listOfCreatures.indexOf(creatureName);
+
+//function to get next creature name in the listOfCreature
 let getNextCreatureName = (creatureName) => {
     let index = listOfCreatures.indexOf(creatureName) + 1;
     return getName(index);
 };
 
+//function to get Creature RegExp
+let getCreatureRegExp = (creatureName) => regArr[getCreatureIndex(creatureName)];
+
 //function to get creature text
-let getCreatureText = (creatureName, sourceText) => "";
+let getCreatureText = (creatureName, sourceText) => {
+    let start = sourceText.search(getCreatureRegExp(creatureName));
+    //handeling last creature Case
+    if (getCreatureIndex(creatureName) == listOfCreatures.length - 1) return sourceText.slice(start);
+    let end = sourceText.search(getCreatureRegExp(getNextCreatureName(creatureName)));
 
-// function to get Creature's name at i index
-let getName = (i) => regArr[i].toString().replace(/\//g, "");
+    return sourceText.slice(start, end);
+};
 
-let creatureTest = getName(50);
+
+
+let creatureTest = getName(68);
 console.log(creatureTest);
-console.log(`Créature suivante = ${getNextCreatureName(creatureTest)}`);
+let textTemp = getCreatureText(creatureTest, text);
+console.log(textTemp);
 
 for (let i = 0; i < listOfCreatures.length; i++) {
     if (i == listOfCreatures.length - 1) {
