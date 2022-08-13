@@ -49,7 +49,7 @@ let getAttribute = (reg, txt) => {
 let getSkills = (txt) => {
     let workText = txt;
     //check absence of skill
-    if (!workText.match(/SKILLS/)) return {};
+    if (!workText.match(/SKILLS/)) return null;
     //slice the texte to keep the skill section
     workText = workText.slice(workText.search(/SKILLS/), workText.search(/TALENTS|MOVEMENT/));
     //RegExp to match skill name
@@ -63,6 +63,12 @@ let getSkills = (txt) => {
     return Object.fromEntries(new Map(skills));
 }
 
+//function to get mouvement value
+let getMovement = (txt) => {
+    if (!txt.search(/MOVEMENT/)) return null;
+    txt = txt.slice(txt.search(/MOVEMENT:/));
+    return txt.match(/\d+/);
+}
 
 //fill textByCreatureArray
 let creatureTable = [];
@@ -79,6 +85,7 @@ regArr.forEach(e => {
         wits: getAttribute(witReg, text),
         empathy: getAttribute(empReg, text)
     };
+    let movement = getMovement(text);
     let skills = getSkills(text);
     let talents = {};
     let gears = {};
@@ -92,6 +99,7 @@ regArr.forEach(e => {
         name: name,
         description: description,
         attributes: attributes,
+        movement: movement,
         skills: skills,
         talents: talents,
         gears: gears,
@@ -103,8 +111,9 @@ regArr.forEach(e => {
 
 }
 );
-console.log(creatureTable[2].name);
-console.log(creatureTable[2].attributes);
-console.log(creatureTable[2].skills)
+console.log(creatureTable[1].name);
+console.log(creatureTable[1].attributes);
+console.log(creatureTable[1].skills)
+console.log(`mouvement = ${creatureTable[1].movement}`)
 
 
