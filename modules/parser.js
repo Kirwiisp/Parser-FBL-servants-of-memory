@@ -3,7 +3,7 @@ import { listOfCreatures } from './textSource.js';
 
 // creating an array of RegExp for creatures segments
 let regArr = [];
-listOfCreatures.forEach(e => regArr.push(new RegExp(`${e}\n`)));
+listOfCreatures.forEach(e => regArr.push(new RegExp(`\n${e}\n`)));
 
 // function to get Creature's name at i index
 let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n/g, "");
@@ -61,18 +61,42 @@ let getSkills = (txt) => {
         skills.push([skillsNameArr[i], parseInt(workText.match(/\d+/)[0])]);
     }
     return Object.fromEntries(new Map(skills));
-}
+};
 
 //function to get mouvement value
 let getMovement = (txt) => {
     if (!txt.search(/MOVEMENT/)) return null;
     txt = txt.slice(txt.search(/MOVEMENT:/));
     return txt.match(/\d+/);
+};
+
+
+//function to get talents
+let getTalents = (txt) => {
+    //check absence of skill
+    if (!txt.match(/TALENTS/)) return null;
+    //slice the texte to keep the skill section
+    txt = txt.slice(txt.search(/TALENTS/), txt.search(/GEAR|ARMOR|MOVEMENT/));
+    //RegExp to match skill name
+    if (txt.match(/\-/)) return null;
+    let talentsNameReg = /(?<=TALENTS:|,)[\s\w+]*(?=\d)/mg;
+    let talentsNameArr = txt.match(talentsNameReg);
+    let talents = []
+    for (let i = 0; i < talentsNameArr.length; i++) {
+        txt = txt.slice(txt.search(talentsNameArr[i]));
+        talents.push([talentsNameArr[i], parseInt(txt.match(/\d+/)[0])]);
+    }
+    return Object.fromEntries(new Map(talents));
 }
+
+//function to get armor rating (do not parse the possible following description)
+let getArmor = (txt) => {
+    if (!txt.match(/ARMOR RATING:/)) return null;
+    return parseInt(txt.match(/(?<=ARMOR RATING: )\d+/));
+};
 
 //fill textByCreatureArray
 let creatureTable = [];
-let i = 0;
 regArr.forEach(e => {
     let text = getCreatureText(e, sourceText);
     let translatedText = ``;
@@ -87,7 +111,8 @@ regArr.forEach(e => {
     };
     let movement = getMovement(text);
     let skills = getSkills(text);
-    let talents = {};
+    let talents = getTalents(text);
+    let armor = getArmor(text);
     let gears = {};
     let spe = ``;
     let tab = {};
@@ -102,6 +127,7 @@ regArr.forEach(e => {
         movement: movement,
         skills: skills,
         talents: talents,
+        armor: armor,
         gears: gears,
         spe: spe,
         tab: tab,
@@ -111,9 +137,15 @@ regArr.forEach(e => {
 
 }
 );
-console.log(creatureTable[1].name);
-console.log(creatureTable[1].attributes);
-console.log(creatureTable[1].skills)
-console.log(`mouvement = ${creatureTable[1].movement}`)
+
+console.log(creatureTable[24].name);
+console.log(regArr[69]);
+//onsole.log(creatureTable[69].text);
+console.log(creatureTable[69].attributes);
+console.log(creatureTable[69].skills)
+console.log(`mouvement = ${creatureTable[69].movement}`)
+console.log(`talents = ${creatureTable[69].talents}`)
+console.log(`armor = ${creatureTable[24].armor}`)
+
 
 
