@@ -5,8 +5,10 @@ import { listOfCreatures } from './textSource.js';
 let regArr = [];
 listOfCreatures.forEach(e => regArr.push(new RegExp(`\n${e}\n`)));
 
-// function to get Creature's name at i index
-let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n/g, "");
+// function to get Creature's name
+let getCreatureName = (regExp) => regExp.toString().replace(/\/|\\n|\\s|\*|\\/g, "");
+
+let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n|\\s|\*/g, "");
 
 
 //function to get Next creature RegExp
@@ -95,14 +97,18 @@ let getArmor = (txt) => {
     return parseInt(txt.match(/(?<=ARMOR RATING: )\d+/));
 };
 
+//function to get the gear
+let getGear = (txt) => {
+    if (!txt.search(/GEAR/)) return null;
+    return txt.match(/(?<=GEAR:)(.*\n)*?(?=[A-Z]{2}|\*)/m)
+}
 //fill textByCreatureArray
 let creatureTable = [];
 regArr.forEach(e => {
     let text = getCreatureText(e, sourceText);
     let translatedText = ``;
-    let name = textOfRegExp(e);
-    let description = ``;
-    description = getDescription(text, e);
+    let name = getCreatureName(e);
+    let description = getDescription(text, e);
     let attributes = {
         strength: getAttribute(strReg, text),
         agility: getAttribute(agiReg, text),
@@ -113,7 +119,7 @@ regArr.forEach(e => {
     let skills = getSkills(text);
     let talents = getTalents(text);
     let armor = getArmor(text);
-    let gears = {};
+    let gears = getGear(text);
     let spe = ``;
     let tab = {};
     let notes = ``;
@@ -138,14 +144,17 @@ regArr.forEach(e => {
 }
 );
 
-console.log(creatureTable[24].name);
-console.log(regArr[69]);
-//onsole.log(creatureTable[69].text);
-console.log(creatureTable[69].attributes);
-console.log(creatureTable[69].skills)
-console.log(`mouvement = ${creatureTable[69].movement}`)
-console.log(`talents = ${creatureTable[69].talents}`)
-console.log(`armor = ${creatureTable[24].armor}`)
+console.log(creatureTable[70].name);
+console.log(regArr[70]);
+//console.log(sourceText.search(regArr[0]));
+//console.log(creatureTable[0].text);
+console.log(`description = ${creatureTable[70].description}`)
+console.log(creatureTable[70].attributes);
+console.log(creatureTable[70].skills)
+console.log(`mouvement = ${creatureTable[70].movement}`)
+console.log(`talents = ${creatureTable[70].talents}`)
+console.log(`armor = ${creatureTable[70].armor}`)
+console.log(`gears = ${creatureTable[70].gears}`)
 
 
 
