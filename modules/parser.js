@@ -8,14 +8,10 @@ listOfCreatures.forEach(e => regArr.push(new RegExp(`${e}\n`)));
 // function to get Creature's name at i index
 let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n/g, "");
 
-//function to get Creature RegExp
-let getCreatureRegExp = (creatureName) => regArr[getCreatureIndex(creatureName)];
-
-// function to get index of Creature in listOfCreatures
-let getCreatureIndex = (creatureName) => listOfCreatures.indexOf(creatureName);
 
 //function to get Next creature RegExp
 let getNextRegExpCreature = (creatureRegExp) => regArr[regArr.indexOf(creatureRegExp) + 1];
+
 
 //function to get creature text
 let getCreatureText = (creatureRegExp, sourceText) => {
@@ -26,6 +22,13 @@ let getCreatureText = (creatureRegExp, sourceText) => {
 
     return sourceText.slice(start, end);
 };
+
+
+//function to get Creature Description
+let getDescription = (text, reg) => {
+    let descStartReg = new RegExp(`(?<=${textOfRegExp(reg)})`);
+    return text.slice(text.search(descStartReg), text.search(attributesReg)).trim()
+}
 
 //RegExp of attibutes 
 let attributesReg = /ATTRIBUTES:/;
@@ -42,9 +45,22 @@ let getAttribute = (reg, txt) => {
     return parseInt(resp);
 };
 
-let getDescription = (text, reg) => {
-    let descStartReg = new RegExp(`(?<=${textOfRegExp(reg)})`);
-    return text.slice(text.search(descStartReg), text.search(attributesReg)).trim()
+//function to get the list of skills with their value
+let getSkills = (txt) => {
+    let workText = txt;
+    //check absence of skill
+    if (!workText.match(/SKILLS/)) return {};
+    //slice the texte to keep the skill section
+    workText = workText.slice(workText.search(/SKILLS/), workText.search(/TALENTS|MOVEMENT/));
+    //RegExp to match skill name
+    let skillsNameReg = /(?<=SKILLS:|,)\s*\w+\b/mg;
+    let skillsNameArr = workText.match(skillsNameReg);
+    let skills = []
+    for (let i = 0; i < skillsNameArr.length; i++) {
+        workText = workText.slice(workText.search(skillsNameArr[i]));
+        skills.push([skillsNameArr[i], parseInt(workText.match(/\d+/)[0])]);
+    }
+    return Object.fromEntries(new Map(skills));
 }
 
 
@@ -58,16 +74,12 @@ regArr.forEach(e => {
     let description = ``;
     description = getDescription(text, e);
     let attributes = {
-        strength: 0,
-        agility: 0,
-        wits: 0,
-        empathy: 0
+        strength: getAttribute(strReg, text),
+        agility: getAttribute(agiReg, text),
+        wits: getAttribute(witReg, text),
+        empathy: getAttribute(empReg, text)
     };
-    attributes.strength = getAttribute(strReg, text);
-    attributes.agility = getAttribute(agiReg, text);
-    attributes.wits = getAttribute(witReg, text);
-    attributes.empathy = getAttribute(empReg, text);
-    let skills = {};
+    let skills = getSkills(text);
     let talents = {};
     let gears = {};
     let spe = ``;
@@ -91,8 +103,8 @@ regArr.forEach(e => {
 
 }
 );
-console.log(creatureTable[40].name);
-console.log(creatureTable[40].attributes);
-
+console.log(creatureTable[2].name);
+console.log(creatureTable[2].attributes);
+console.log(creatureTable[2].skills)
 
 
