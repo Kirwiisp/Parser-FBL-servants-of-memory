@@ -1,3 +1,5 @@
 modules/textSource.js
 modules/parserSymbaroum.js
+assets/*
 /package.json
+correspondance.json

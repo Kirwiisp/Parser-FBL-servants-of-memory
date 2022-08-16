@@ -1,5 +1,5 @@
-import { sourceText } from './textSource.js';
-import { listOfCreatures } from './textSource.js';
+import { sourceText, listOfCreatures, sourceTextFr, listOfCreaturesFr } from './textSource.js';
+
 
 // creating an array of RegExp for creatures segments
 let regArr = [];
@@ -108,6 +108,8 @@ regArr.forEach(e => {
     let text = getCreatureText(e, sourceText);
     let translatedText = ``;
     let name = getCreatureName(e);
+    let img = `../assets/${e}.png`;
+    let imgT = `../assets/${e} Token.png`;
     let description = getDescription(text, e);
     let attributes = {
         strength: getAttribute(strReg, text),
@@ -120,8 +122,7 @@ regArr.forEach(e => {
     let talents = getTalents(text);
     let armor = getArmor(text);
     let gears = getGear(text);
-    let spe = ``;
-    let tab = {};
+    let spe = {};
     let notes = ``;
 
     creatureTable.push({
@@ -136,7 +137,6 @@ regArr.forEach(e => {
         armor: armor,
         gears: gears,
         spe: spe,
-        tab: tab,
         notes: notes
 
     })
@@ -144,17 +144,8 @@ regArr.forEach(e => {
 }
 );
 
-console.log(creatureTable[70].name);
-console.log(regArr[70]);
-//console.log(sourceText.search(regArr[0]));
-//console.log(creatureTable[0].text);
-console.log(`description = ${creatureTable[70].description}`)
-console.log(creatureTable[70].attributes);
-console.log(creatureTable[70].skills)
-console.log(`mouvement = ${creatureTable[70].movement}`)
-console.log(`talents = ${creatureTable[70].talents}`)
-console.log(`armor = ${creatureTable[70].armor}`)
-console.log(`gears = ${creatureTable[70].gears}`)
+export { creatureTable };
+
 
 
 
