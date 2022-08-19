@@ -11,7 +11,7 @@ console.log("///Folder creaation/////")
 
 Hooks.once("ready", async () => {
     await Folder.create({
-        name: "TestParser",
+        name: moduleData.moduleFolderNameDict['Servants of Memory actors'],
         type: "Actor"
     });
 
@@ -19,7 +19,7 @@ Hooks.once("ready", async () => {
         let actor = Actor.create({
             name: e.name,
             type: "monster",
-            folder: game.folders.getName("TestParser"),
+            folder: game.folders.getName(moduleData.moduleFolderNameDict['Servants of Memory actors']),
             img: e.img,
             data: {
                 attribute: {

@@ -2,7 +2,7 @@ import { sourceText, listOfCreatures, sourceTextFr, listOfCreaturesFr } from './
 
 let modulePath = `modules/fbl-servants-of-memory-npc-parser`;
 let assetsPath = `${modulePath}/assets`;
-let defaultImgPath = `modules/fbl-core-game/assets/portrait.webp`;
+let defaultImgPath = `${assetsPath}/Base Token.png`;
 
 /*
 Functions 
@@ -137,7 +137,7 @@ regArr.forEach(async e => {
     let imgToken = await fetch(tokenPath)
         .then(res => {
             if (!res.ok) return defaultImgPath;
-            return path;
+            return tokenPath;
         });
     let description = getDescription(text, e);
     let attributes = {
