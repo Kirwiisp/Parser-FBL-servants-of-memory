@@ -115,38 +115,30 @@ let tableStartReg = /D6+ (ATTACKS?|MALFUNCTION|SIGIL|INFESTATION PROGRESS|ANIMAL
 let rangeStartReg = /1|11/;
 
 //Images fetching
-let getImg = (name) => {
-    let path = `${assetsPath}/${name}.png`;
-    fetch(path)
-        .then(res => {
-            if (!res.ok) img = defaultImgPath;
-            else img = path;
-        })
-}
 
-let getImgToken = (name) => {
-    let tokenPath = `${assetsPath}/${name} Token.png`;
-    fetch(tokenPath)
-        .then(res => {
-            if (!res.ok) imgToken = defaultImgPath;
-            else imgToken = tokenPath;
-        }
-        )
-}
+
 /*
 Main generation of creatures
 */
-var img = ``;
-var imgToken = ``;
+
 //fill textByCreatureArray
 let creatureTable = [];
 regArr.forEach(async e => {
     let text = getCreatureText(e, sourceText);
     let translatedText = ``;
     let name = getCreatureName(e);
-
-    await getImg(name);
-    await getImgToken(name);
+    let path = `${assetsPath}/${name}.png`;
+    let tokenPath = `${assetsPath}/${name} Token.png`;
+    let img = await fetch(path)
+        .then(res => {
+            if (!res.ok) return defaultImgPath;
+            return path;
+        });
+    let imgToken = await fetch(tokenPath)
+        .then(res => {
+            if (!res.ok) return defaultImgPath;
+            return path;
+        });
     let description = getDescription(text, e);
     let attributes = {
         strength: getAttribute(strReg, text),
@@ -182,10 +174,6 @@ regArr.forEach(async e => {
 
 }
 );
-console.log(`*************************`)
-console.log(`*************************`)
-console.log(`*************************`)
-console.log(creatureTable);
 
 export { creatureTable };
 
