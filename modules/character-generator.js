@@ -14,7 +14,7 @@ Hooks.once("ready", async () => {
         name: moduleData.moduleFolderNameDict['Servants of Memory actors'],
         type: "Actor"
     });
-    let skillsNameArr = ["might", "endure", "melee", "crafting", "stealth", "sleight-of-hand", "move", "marksmanship", "scout", "lore", "survive", "insight", "manipulate", "performance", "healing", "animal"]
+    let skillsNameArr = ["might", "endure", "melee", "crafting", "stealth", "sleight-of-hand", "move", "marksmanship", "scout", "scouting", "lore", "survive", "insight", "manipulate", "performance", "healing", "animal"]
 
     creatureTable.forEach(async creature => {
         let actor = await Actor.create({
