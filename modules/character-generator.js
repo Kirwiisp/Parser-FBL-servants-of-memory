@@ -14,30 +14,31 @@ Hooks.once("ready", async () => {
         name: moduleData.moduleFolderNameDict['Servants of Memory actors'],
         type: "Actor"
     });
+    let skillsNameArr = ["might", "endure", "melee", "crafting", "stealth", "sleight-of-hand", "move", "marksmanship", "scout", "lore", "survive", "insight", "manipulate", "performance", "healing", "animal"]
 
-    creatureTable.forEach(e => {
-        let actor = Actor.create({
-            name: e.name,
+    creatureTable.forEach(async creature => {
+        let actor = await Actor.create({
+            name: creature.name,
             type: "monster",
             folder: game.folders.getName(moduleData.moduleFolderNameDict['Servants of Memory actors']),
-            img: e.img,
+            img: creature.img,
             data: {
                 attribute: {
                     strength: {
-                        value: e.attributes.strength,
-                        max: e.attributes.strength
+                        value: creature.attributes.strength,
+                        max: creature.attributes.strength
                     },
                     agility: {
-                        value: e.attributes.agility,
-                        max: e.attributes.agility
+                        value: creature.attributes.agility,
+                        max: creature.attributes.agility
                     },
                     wits: {
-                        value: e.attributes.wits,
-                        max: e.attributes.wits
+                        value: creature.attributes.wits,
+                        max: creature.attributes.wits
                     },
                     empathy: {
-                        value: e.attributes.empathy,
-                        max: e.attributes.empathy
+                        value: creature.attributes.empathy,
+                        max: creature.attributes.empathy
                     }
                 }
                 /*,
@@ -140,20 +141,48 @@ Hooks.once("ready", async () => {
                     }
                 }
                 */,
-                movement: { value: e.movement },
+                movement: { value: creature.movement },
                 armor: {
-                    value: e.armor
+                    value: creature.armor
                 },
                 bio: {
                     note: {
-                        value: e.text
+                        value: creature.text
                     }
                 }
             },
             token: {
-                name: e.name,
-                img: e.imgToken
+                name: creature.name,
+                img: creature.imgToken
             }
         });
-    })
+        if (creature.skills) {
+
+            skillsNameArr.forEach(i => {
+                if (creature.skills.hasOwnProperty(i)) {
+                    let skillToFill = `data.skill.${i}.value`;
+                    //handeling  exceptions
+                    if (i == "animal") {
+                        skillToFill = `data.skill.animal-handling.value`;
+                    }
+                    if (i == "scout") {
+                        skillToFill = 'data.skill.scouting.value';
+                    }
+                    if (i == "manipulate") {
+                        skillToFill = 'data.skill.manipulation.value';
+                    }
+                    if (i == "survive") {
+                        skillToFill = 'data.skill.survival.value';
+                    }
+                    if (i == "endure") {
+                        skillToFill = 'data.skill.endurance.value';
+                    }
+
+                    actor.update({ [skillToFill]: creature.skills[i] });
+                }
+            })
+        }
+
+    }
+    )
 })

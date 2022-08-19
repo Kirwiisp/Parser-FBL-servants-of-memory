@@ -65,12 +65,13 @@ let getSkills = (txt) => {
     let skillsNameReg = /(?<=SKILLS:|,)\s*\w+\b/mg;
     // create an array of all skills possesed and trim the names
     let skillsNameArr = workText.match(skillsNameReg);
-    skillsNameArr = skillsNameArr.map(e => e.trim());
-    let skills = []
+    skillsNameArr = skillsNameArr.map(e => e.trim().toLowerCase());
+    let skills = {};
     for (let i = 0; i < skillsNameArr.length; i++) {
-        workText = workText.slice(workText.search(skillsNameArr[i]));
-        skills.push({ name: skillsNameArr[i], value: parseInt(workText.match(/\d+/)[0]) });
+        workText = workText.slice(workText.search(new RegExp(skillsNameArr[i], 'i')));
+        skills[skillsNameArr[i]] = parseInt(workText.match(/\d+/)[0]);
     }
+
     return skills;
 };
 
