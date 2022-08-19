@@ -109,8 +109,16 @@ let getArmor = (txt) => {
 
 //function to get the gear
 let getGear = (txt) => {
-    if (!txt.search(/GEAR/)) return null;
-    return txt.match(/(?<=GEAR:)(.*\n)*?(?=[A-Z]{2}|\*)/m)
+    if (txt.search(/GEAR:/) == -1) return null;
+    let gearArr = [];
+    txt = txt.match(/(?<=GEAR:)(.*\n*)*?(?=[A-Z]{4}|\d{3,}|$)/gm)[0];
+    if (txt.search(/(?<=GEAR:.*),/) == -1) {
+        gearArr.push(txt);
+        return gearArr;
+    }
+    gearArr = txt.split(",");
+    gearArr = gearArr.map(e => e = e.trim())
+    return gearArr
 }
 
 //variables and functions to get creatures tables
@@ -136,13 +144,14 @@ regArr.forEach(async e => {
         .then(res => {
             if (!res.ok) return defaultImgPath;
             return path;
-        });
+        })
+        .catch(e => { console.log(path + " Not found") });
     let imgToken = await fetch(tokenPath)
         .then(res => {
             if (!res.ok) return defaultImgPath;
             return tokenPath;
-        });
-    let description = getDescription(text, e);
+        })
+        .catch(e => { console.log(tokenPath + " Not found") });;
     let attributes = {
         strength: getAttribute(strReg, text),
         agility: getAttribute(agiReg, text),
@@ -153,8 +162,8 @@ regArr.forEach(async e => {
     let movement = getMovement(text);
     let armor = getArmor(text);
     let talents = getTalents(text);
-    let gears = getGear(text);
-    let spe = {};
+    let gears = await getGear(text);
+    let description = getDescription(text, e);
     let notes = ``;
 
     creatureTable.push({
@@ -170,7 +179,6 @@ regArr.forEach(async e => {
         talents: talents,
         armor: armor,
         gears: gears,
-        spe: spe,
         notes: notes
 
     })
