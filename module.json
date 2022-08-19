@@ -1,5 +1,5 @@
 {
-    "name": "FBL-Servants-of-memory-npc-parser",
+    "name": "fbl-servants-of-memory-npc-parser",
     "title": "FBL The Servants of Memory NPC Parser",
     "description": "Creates  NPCs adversary.",
     "authors": [
@@ -12,7 +12,7 @@
     "compatibleCoreVersion": "9.269",
     "scripts": [],
     "esmodules": [
-        "modules/parser.js"
+        "./modules/character-generator.js"
     ],
     "styles": [],
     "languages": [

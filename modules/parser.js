@@ -1,5 +1,12 @@
 import { sourceText, listOfCreatures, sourceTextFr, listOfCreaturesFr } from './textSource.js';
 
+let modulePath = `modules/fbl-servants-of-memory-npc-parser`;
+let assetsPath = `${modulePath}/assets`;
+let defaultImgPath = `modules/fbl-core-game/assets/portrait.webp`;
+
+/*
+Functions 
+*/
 
 // creating an array of RegExp for creatures segments
 let regArr = [];
@@ -102,14 +109,44 @@ let getGear = (txt) => {
     if (!txt.search(/GEAR/)) return null;
     return txt.match(/(?<=GEAR:)(.*\n)*?(?=[A-Z]{2}|\*)/m)
 }
+
+//variables and functions to get creatures tables
+let tableStartReg = /D6+ (ATTACKS?|MALFUNCTION|SIGIL|INFESTATION PROGRESS|ANIMAL UNIQUE TRAITS|ABILITY)/g;
+let rangeStartReg = /1|11/;
+
+//Images fetching
+let getImg = (name) => {
+    let path = `${assetsPath}/${name}.png`;
+    fetch(path)
+        .then(res => {
+            if (!res.ok) img = defaultImgPath;
+            else img = path;
+        })
+}
+
+let getImgToken = (name) => {
+    let tokenPath = `${assetsPath}/${name} Token.png`;
+    fetch(tokenPath)
+        .then(res => {
+            if (!res.ok) imgToken = defaultImgPath;
+            else imgToken = tokenPath;
+        }
+        )
+}
+/*
+Main generation of creatures
+*/
+var img = ``;
+var imgToken = ``;
 //fill textByCreatureArray
 let creatureTable = [];
-regArr.forEach(e => {
+regArr.forEach(async e => {
     let text = getCreatureText(e, sourceText);
     let translatedText = ``;
     let name = getCreatureName(e);
-    let img = `../assets/${e}.png`;
-    let imgT = `../assets/${e} Token.png`;
+
+    await getImg(name);
+    await getImgToken(name);
     let description = getDescription(text, e);
     let attributes = {
         strength: getAttribute(strReg, text),
@@ -117,10 +154,10 @@ regArr.forEach(e => {
         wits: getAttribute(witReg, text),
         empathy: getAttribute(empReg, text)
     };
-    let movement = getMovement(text);
     let skills = getSkills(text);
-    let talents = getTalents(text);
+    let movement = getMovement(text);
     let armor = getArmor(text);
+    let talents = getTalents(text);
     let gears = getGear(text);
     let spe = {};
     let notes = ``;
@@ -128,6 +165,8 @@ regArr.forEach(e => {
     creatureTable.push({
         text: text,
         translatedText: translatedText,
+        img: img,
+        imgToken: imgToken,
         name: name,
         description: description,
         attributes: attributes,
@@ -143,6 +182,10 @@ regArr.forEach(e => {
 
 }
 );
+console.log(`*************************`)
+console.log(`*************************`)
+console.log(`*************************`)
+console.log(creatureTable);
 
 export { creatureTable };
 
