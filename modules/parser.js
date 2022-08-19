@@ -60,16 +60,18 @@ let getSkills = (txt) => {
     //check absence of skill
     if (!workText.match(/SKILLS/)) return null;
     //slice the texte to keep the skill section
-    workText = workText.slice(workText.search(/SKILLS/), workText.search(/TALENTS|MOVEMENT/));
+    workText = workText.slice(workText.search(/SKILLS/), workText.search(/TALENTS|MOVEMENT|ARMOR/));
     //RegExp to match skill name
     let skillsNameReg = /(?<=SKILLS:|,)\s*\w+\b/mg;
+    // create an array of all skills possesed and trim the names
     let skillsNameArr = workText.match(skillsNameReg);
+    skillsNameArr = skillsNameArr.map(e => e.trim());
     let skills = []
     for (let i = 0; i < skillsNameArr.length; i++) {
         workText = workText.slice(workText.search(skillsNameArr[i]));
-        skills.push([skillsNameArr[i], parseInt(workText.match(/\d+/)[0])]);
+        skills.push({ name: skillsNameArr[i], value: parseInt(workText.match(/\d+/)[0]) });
     }
-    return Object.fromEntries(new Map(skills));
+    return skills;
 };
 
 //function to get mouvement value
@@ -171,10 +173,10 @@ regArr.forEach(async e => {
         notes: notes
 
     })
-
 }
 );
-
+console.log("*****************************************");
+console.log(creatureTable);
 export { creatureTable };
 
 

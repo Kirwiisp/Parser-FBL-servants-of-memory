@@ -146,7 +146,7 @@ Hooks.once("ready", async () => {
                 },
                 bio: {
                     note: {
-                        value: e.txt
+                        value: e.text
                     }
                 }
             },
