@@ -1,21 +1,60 @@
 import { creatureTable } from './parser.js'
 const moduleData = {
     moduleFlag: "servants-of-memory-parser",
-    moduleKey: "fbl-servants-of-memory-parser",
+    moduleKey: "fbl-servants-of-memory-npc-parser",
     moduleTitle: "FBL The Servants of Memory NPC Parser",
     moduleFolderNameDict: {
         "Servants of Memory actors": "Servants of Memory"
     }
 };
-console.log("///Folder creaation/////")
 
-Hooks.once("ready", async () => {
+// class required by the registerMenu method.
+class ImportFormWrapper extends FormApplication {
+    render() {
+        if (!game?.data) return ui.notifications.error("Can't access game version, be careful with importing content.");
+        if (game.data?.version > "0.7.9") return ModuleImport.filterDialog(moduleData);
+        return ui.notifications.warn("This version of the core module is not compatible with 0.7.9");
+    }
+}
+
+let welcome = async (data) => {
+
+    //game.settings.set(data.moduleKey, "initialized", true);
+    const dialog = new Dialog({
+        title: `Import ${data.moduleTitle}`,
+        content: await getTemplate(`modules/${data.moduleKey}/modules/import.html`),
+        buttons: {
+            initialize: {
+                label: "Begin!",
+                callback: async () => {
+
+                    await createFolder();
+                    generateCreatures();
+
+                }
+            },
+
+            cancel: {
+                label: "Cancel",
+                callback: () => console.log("import cancel")
+            }
+        }
+    }
+    );
+    dialog.render(true);
+
+}
+//Creation of Servant of Memory folder
+let createFolder = async () => {
+    console.log("///Folder creaation/////")
     await Folder.create({
         name: moduleData.moduleFolderNameDict['Servants of Memory actors'],
         type: "Actor"
     });
-    let skillsNameArr = ["might", "endure", "melee", "crafting", "stealth", "sleight-of-hand", "move", "marksmanship", "scout", "scouting", "lore", "survive", "insight", "manipulate", "performance", "healing", "animal"]
+}
 
+let skillsNameArr = ["might", "endure", "melee", "crafting", "stealth", "sleight-of-hand", "move", "marksmanship", "scout", "scouting", "lore", "survive", "insight", "manipulate", "performance", "healing", "animal"]
+let generateCreatures = () => {
     creatureTable.forEach(async creature => {
         let actor = await Actor.create({
             name: creature.name,
@@ -85,4 +124,7 @@ Hooks.once("ready", async () => {
 
     }
     )
+}
+Hooks.once("ready", async () => {
+    welcome(moduleData);
 })

@@ -126,7 +126,26 @@ let tableStartReg = /D6+ (ATTACKS?|MALFUNCTION|SIGIL|INFESTATION PROGRESS|ANIMAL
 let rangeStartReg = /1|11/;
 
 //Images fetching
+let getImg = async (name) => {
+    let path = defaultImgPath;
+    await fetch(`${assetsPath}/${name}.png`)
+        .then(res => {
+            if (res.ok) path = `${assetsPath}/${name}.png`;
+            else throw new Error();
+        })
+        .catch((e) => { console.log(`Image de ${name} non trouvée. Chargement de l'image par défaut`) });
+    return path;
+}
 
+let getTokenImg = async (name) => {
+    let tokenPath = defaultImgPath;
+    return await fetch(`${assetsPath}/${name} Token.png`)
+        .then(res => {
+            if (res.ok) tokenPath = `${assetsPath}/${name} Token.png`;
+            else throw new Error();
+        })
+        .catch((e) => { console.log(`Image de ${name} non trouvée. Chargement du Token par défaut`) })
+}
 
 /*
 Main generation of creatures
@@ -138,20 +157,10 @@ regArr.forEach(async e => {
     let text = getCreatureText(e, sourceText);
     let translatedText = ``;
     let name = getCreatureName(e);
-    let path = `${assetsPath}/${name}.png`;
-    let tokenPath = `${assetsPath}/${name} Token.png`;
-    let img = await fetch(path)
-        .then(res => {
-            if (!res.ok) return defaultImgPath;
-            return path;
-        })
-        .catch(e => { console.log(path + " Not found") });
-    let imgToken = await fetch(tokenPath)
-        .then(res => {
-            if (!res.ok) return defaultImgPath;
-            return tokenPath;
-        })
-        .catch(e => { console.log(tokenPath + " Not found") });;
+
+
+    let img = await getImg(name);
+    let imgToken = await getTokenImg(name);
     let attributes = {
         strength: getAttribute(strReg, text),
         agility: getAttribute(agiReg, text),

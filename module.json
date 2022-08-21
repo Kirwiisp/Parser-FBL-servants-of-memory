@@ -15,13 +15,7 @@
         "./modules/character-generator.js"
     ],
     "styles": [],
-    "languages": [
-        {
-            "lang": "en",
-            "name": "English",
-            "path": "lang/en.json"
-        }
-    ],
+    "languages": [],
     "packs": [],
     "system": [
         "forbidden-lands"
