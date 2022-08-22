@@ -41,15 +41,17 @@ let getDescription = (text, reg) => {
 
 //RegExp of attibutes 
 let attributesReg = /ATTRIBUTES:/;
-let strReg = /(?<=STRENGTH)\s*\d+/;
-let agiReg = /(?<=AGILITY)\s*\d+/;
-let witReg = /(?<=WITS)\s*\d+/;
-let empReg = /(?<=EMPATHY)\s*\d+/;
+let strReg = /(?<=STRENGTH)\s*\d+-*\d*/;
+let agiReg = /(?<=AGILITY)\s*\d+-*\d*/;
+let witReg = /(?<=WITS)\s*\d+-*\d*/;
+let empReg = /(?<=EMPATHY)\s*\d+-*\d*/;
 
 //function to get attribute 
 let getAttribute = (reg, txt) => {
     txt = txt.slice(txt.search(attributesReg));
     let resp = txt.match(reg);
+    //keep higher attribut
+    if (resp) resp = resp[0].match(/\d+$/)
     if (!resp) resp = 0;
     return parseInt(resp);
 };
@@ -112,7 +114,7 @@ let getGear = (txt) => {
     if (txt.search(/GEAR:/) == -1) return null;
     let gearArr = [];
     txt = txt.match(/(?<=GEAR:)(.*\n*)*?(?=[A-Z]{4}|\d{3,}|$)/gm)[0];
-    if (txt.search(/(?<=GEAR:.*),/) == -1) {
+    if (txt.search(/,/g) == -1) {
         gearArr.push(txt);
         return gearArr;
     }
