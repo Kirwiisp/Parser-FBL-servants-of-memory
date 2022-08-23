@@ -95,6 +95,7 @@ let generateCreatures = () => {
                 img: creature.imgToken
             }
         });
+        //update skills if specified
         if (creature.skills) {
 
             skillsNameArr.forEach(i => {
@@ -121,6 +122,15 @@ let generateCreatures = () => {
                 }
             })
         }
+
+        //update gears
+
+            if(creature.gears){
+                creature.gears.forEach( async e=>
+                   actor.createEmbeddedDocuments("Item",[e])
+                )
+            }
+
 
     }
     )

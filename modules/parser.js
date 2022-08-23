@@ -108,20 +108,21 @@ let getArmor = (txt) => {
     if (!txt.match(/ARMOR RATING:/)) return null;
     return parseInt(txt.match(/(?<=ARMOR RATING: )\d+/));
 };
-
 //function to get the gear
 let getGear = (txt) => {
     if (txt.search(/GEAR:/) == -1) return null;
-    let gearArr = [];
-    txt = txt.match(/(?<=GEAR:)(.*\n*)*?(?=[A-Z]{4}|\d{3,}|$)/gm)[0];
-    if (txt.search(/,/g) == -1) {
-        gearArr.push(txt);
-        return gearArr;
-    }
-    gearArr = txt.split(",");
-    gearArr = gearArr.map(e => e = e.trim())
-    return gearArr
+    let gearArr = txt.match(/(?<=GEAR:)(.*\n*)*?(?=[A-Z]{4}|\d{3,}|\*{4,}|Special Attac|$|Orc)/gm);
+    gearArr = gearArr.map(e=>e.split(/(?<!spear),(?! can)/g))
+    let resp =[];
+    gearArr = gearArr.filter(e=> e !='');
+    gearArr= gearArr.map(e => e.map(
+        e => {
+        resp.push({name : e.trim(),"type":"gear"})
+        }
+    ))
+    return resp;
 }
+export {getGear}
 
 //variables and functions to get creatures tables
 let tableStartReg = /D6+ (ATTACKS?|MALFUNCTION|SIGIL|INFESTATION PROGRESS|ANIMAL UNIQUE TRAITS|ABILITY)/g;
