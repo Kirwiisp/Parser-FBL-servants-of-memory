@@ -117,12 +117,33 @@ let getGear = (txt) => {
     gearArr = gearArr.filter(e=> e !='');
     gearArr= gearArr.map(e => e.map(
         e => {
-        resp.push({name : e.trim(),"type":"gear"})
+            if(e.search("ARMOR") != -1){
+                resp.push(getGearArmorData(e));
+            }else resp.push({name : e.trim(),type:"gear"})
         }
     ))
     return resp;
 }
-export {getGear}
+
+let getGearArmorData = (txt)=>{
+        let armorData={
+            name:"",
+            type:"",
+            data:{
+                bonus: {
+                    "value": 0,
+                    "max": 0
+                }
+            }
+			
+        };
+        armorData.type = "armor"
+        armorData.name = txt.match(/^.*(?=\n*\(ARMOR)/)[0];
+        armorData.data.bonus.max= txt.match(/\d+/)[0];
+        armorData.data.bonus.value = armorData.data.bonus.max; 
+        return armorData;
+}
+    
 
 //variables and functions to get creatures tables
 let tableStartReg = /D6+ (ATTACKS?|MALFUNCTION|SIGIL|INFESTATION PROGRESS|ANIMAL UNIQUE TRAITS|ABILITY)/g;
