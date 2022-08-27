@@ -1,7 +1,6 @@
 export let listOfCreatures = ["**** COPY THE CREATURES NAMES FROM THE PDF AS : 'Creature 1','Creature2',...,'last creature'"];
-export let listOfCreaturesFr = [];
+
 
 export let sourceText =
-    ` COPY TEXT FROM 5-174 `;
+    ` COPY PDF TEXT FROM TABLE OF CONTENTS P.2 TO THE P.191 `;
 
-export let sourceTextFr = ``;

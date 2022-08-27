@@ -1,4 +1,4 @@
-import { sourceText, listOfCreatures, sourceTextFr, listOfCreaturesFr } from './textSource.js';
+import { sourceText, listOfCreatures} from './textSource.js';
 
 let modulePath = `modules/fbl-servants-of-memory-npc-parser`;
 let assetsPath = `${modulePath}/assets`;
@@ -24,7 +24,7 @@ let getNextRegExpCreature = (creatureRegExp) => regArr[regArr.indexOf(creatureRe
 //remove Name + order
 let sourceTextMod =""
 try{
-    if(sourceText.match(/.*\(Order #\d*\)/gm).length != 193) {sourceTextMod == null;
+    if(sourceText.match(/.*\(Order #\d*\)/gm).length <180) {sourceTextMod == null;
     }else sourceTextMod = sourceText.replace(/.*\(Order #\d*\)/gm,"**********");
 }catch{
     console.log("***********************************");
@@ -271,7 +271,7 @@ regArr.forEach(async e => {
     })
 }
 );
-
+console.log(regArr)
 export { creatureTable };
 
 
