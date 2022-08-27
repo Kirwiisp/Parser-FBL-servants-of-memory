@@ -7,6 +7,26 @@ const moduleData = {
         "Servants of Memory actors": "Servants of Memory"
     }
 };
+// directory-footer action-buttons
+ let createActorButton = () =>{
+    
+    const actorPanel = document.getElementById('actors');
+    const footer = actorPanel.getElementsByClassName('directory-footer')[0];
+    console.log('Creating parser button');
+
+    let parserBtn = document.createElement('button');
+    parserBtn.innerHTML = `<i  class="fas fa-list"></i>Servants of Memory Parser`;
+
+    // add eventlistenner
+    parserBtn.addEventListener('click', ()=>{
+        welcome(moduleData);
+    });
+
+    const createEntityButton =
+      footer.getElementsByClassName('create-entity')[0];
+    footer.insertBefore(parserBtn, createEntityButton);
+}
+
 
 // class required by the registerMenu method.
 class ImportFormWrapper extends FormApplication {
@@ -22,7 +42,7 @@ let welcome = async (data) => {
     //game.settings.set(data.moduleKey, "initialized", true);
     const dialog = new Dialog({
         title: `Import ${data.moduleTitle}`,
-        content: await getTemplate(`modules/${data.moduleKey}/modules/import.html`),
+        content: await getTemplate(`modules/${data.moduleKey}/templates/import.html`),
         buttons: {
             initialize: {
                 label: "Begin!",
@@ -142,6 +162,8 @@ let generateCreatures = () => {
     }
     )
 }
-Hooks.once("ready", async () => {
-    welcome(moduleData);
-})
+Hooks.on('renderSidebarTab', (app, html) => {
+    if (app.options.id == 'actors') {
+        createActorButton();
+    }
+  });

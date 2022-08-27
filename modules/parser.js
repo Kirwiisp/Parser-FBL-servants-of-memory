@@ -1,4 +1,4 @@
-import { sourceText, listOfCreatures} from './textSource.js';
+import { sourceText} from './textSource.js';
 
 let modulePath = `modules/fbl-servants-of-memory-npc-parser`;
 let assetsPath = `${modulePath}/assets`;
@@ -7,6 +7,32 @@ let defaultImgPath = `${assetsPath}/Base Token.png`;
 /*
 Functions 
 */
+
+//remove Name + order
+let sourceTextMod =""
+try{
+    if(sourceText.match(/.*\(Order #\d*\)/gm).length <180) {sourceTextMod == null;
+    }else sourceTextMod = sourceText.replace(/.*\(Order #\d*\)/gm,"**********");
+}catch{
+    console.log("***********************************");
+    console.log("ERROR : your text isn't the right length or isn't legal");
+    console.log("***********************************");
+}
+//handeling issue with gear RegEx
+sourceTextMod = sourceTextMod.replace(/ARMOR\nRATING/,"ARMOR RATING");
+
+let getListOfCreatures = () =>{
+     let test = sourceTextMod.match(/(?<=\.\.\.\.5)(.*\n)*?(?=Rarities)/)[0];
+    test = test.replace(/\**/g,"")
+    .replace(/\.*\d+/g,"/").replace(/\(/,"\\(")
+    .replace(/\)/,"\\)")
+    .split("/")
+    .map(e=>e.trim())
+    .filter(e => e !='');
+    return test;
+} 
+
+let listOfCreatures = getListOfCreatures();
 
 // creating an array of RegExp for creatures segments
 let regArr = [];
@@ -21,18 +47,7 @@ let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n|\\s|\*/g, "");
 //function to get Next creature RegExp
 let getNextRegExpCreature = (creatureRegExp) => regArr[regArr.indexOf(creatureRegExp) + 1];
 
-//remove Name + order
-let sourceTextMod =""
-try{
-    if(sourceText.match(/.*\(Order #\d*\)/gm).length <180) {sourceTextMod == null;
-    }else sourceTextMod = sourceText.replace(/.*\(Order #\d*\)/gm,"**********");
-}catch{
-    console.log("***********************************");
-    console.log("ERROR : your text isn't the right size or isn't legal");
-    console.log("***********************************");
-}
-//handeling issue with gear RegEx
-sourceTextMod = sourceTextMod.replace(/ARMOR\nRATING/,"ARMOR RATING");
+
 
 //function to get creature text
 let getCreatureText = (creatureRegExp, sourceTextMod) => {
@@ -160,10 +175,7 @@ let getGearArmorData = (txt)=>{
         return armorData;
     }
     
-    
-    //variables and functions to get creatures tables
-    let tableStartReg = /D6+ (ATTACKS?|MALFUNCTION|SIGIL|INFESTATION PROGRESS|ANIMAL UNIQUE TRAITS|ABILITY)/g;
-let rangeStartReg = /1|11/;
+
 
 //Images fetching
 let getImg = async (name) => {
@@ -271,7 +283,6 @@ regArr.forEach(async e => {
     })
 }
 );
-console.log(regArr)
 export { creatureTable };
 
 
