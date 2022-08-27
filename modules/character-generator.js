@@ -130,6 +130,13 @@ let generateCreatures = () => {
                    actor.createEmbeddedDocuments("Item",[e])
                 )
             }
+        //update attacks
+
+        if(creature.attacks){
+            creature.attacks.forEach( async e=>
+               actor.createEmbeddedDocuments("Item",[e])
+            )
+        }
 
 
     }

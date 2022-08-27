@@ -11,3 +11,5 @@ let rangeTable = /(?<=\d )[A-Z](.*\n)*?(?=(\d))/;
 
     /D6+ (ATTACKS?|MALFUNCTION|SIGIL|INFESTATION PROGRESS|ANIMAL UNIQUE TRAITS|ABILITY)/g
 */
+
+export let attackReg = /\d+-*\d* [A-Z\s-]{2,}(:|!)(.*\n)*?(?=\d+-*\d*\s[A-Z]{2,}|[A-Z]{2,}\s[A-Z]|\d+\n\*{4}|Chitin Drake)/gm
