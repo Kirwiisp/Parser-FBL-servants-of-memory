@@ -21,7 +21,7 @@
     "socket": false,
     "url": "https://github.com/Kirwiisp/Parser-FBL-servants-of-memory",
     "manifest": "https://raw.githubusercontent.com/Kirwiisp/Parser-FBL-servants-of-memory/master/module.json",
-    "download": "https://github.com/Kirwiisp/Parser-FBL-servants-of-memory/archive/refs/tags/1.0.1.zip",
+    "download": "https://github.com/Kirwiisp/Parser-FBL-servants-of-memory/archive/refs/tags/v1.1.0.zip",
     "protected": false,
     "coreTranslation": false,
     "library": false
