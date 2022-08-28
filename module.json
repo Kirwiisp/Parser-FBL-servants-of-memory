@@ -2,12 +2,10 @@
     "name": "fbl-servants-of-memory-npc-parser",
     "title": "FBL The Servants of Memory NPC Parser",
     "description": "Creates  NPCs adversary.",
-    "authors": [
-        "Kirwiisp"
-    ],
+    "authors": "Kirwiisp",
     "flags": {},
     "version": "1.0.0",
-    "minimumCoreVersion": "9.000",
+    "minimumCoreVersion": "9.269",
     "compatibleCoreVersion": "9.269",
     "scripts": [],
     "esmodules": [
