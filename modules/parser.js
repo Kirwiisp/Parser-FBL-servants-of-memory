@@ -279,7 +279,6 @@ regArr.forEach(async e => {
     })
 }
 );
-console.log(creatureTable);
 return await creatureTable ;
 }
 
