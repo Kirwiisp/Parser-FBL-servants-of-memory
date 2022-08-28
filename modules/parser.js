@@ -1,4 +1,3 @@
-import { sourceText} from './textSource.js';
 
 let modulePath = `modules/fbl-servants-of-memory-npc-parser`;
 let assetsPath = `${modulePath}/assets`;
@@ -7,44 +6,45 @@ let defaultImgPath = `${assetsPath}/Base Token.png`;
 /*
 Functions 
 */
-
-//remove Name + order
-let sourceTextMod =""
-try{
-    if(sourceText.match(/.*\(Order #\d*\)/gm).length <180) {sourceTextMod == null;
-    }else sourceTextMod = sourceText.replace(/.*\(Order #\d*\)/gm,"**********");
-}catch{
-    console.log("***********************************");
-    console.log("ERROR : your text isn't the right length or isn't legal");
-    console.log("***********************************");
-}
-//handeling issue with gear RegEx
-sourceTextMod = sourceTextMod.replace(/ARMOR\nRATING/,"ARMOR RATING");
-
-let getListOfCreatures = () =>{
-     let test = sourceTextMod.match(/(?<=\.\.\.\.5)(.*\n)*?(?=Rarities)/)[0];
-    test = test.replace(/\**/g,"")
-    .replace(/\.*\d+/g,"/").replace(/\(/,"\\(")
-    .replace(/\)/,"\\)")
-    .split("/")
-    .map(e=>e.trim())
-    .filter(e => e !='');
-    return test;
-} 
-
-let listOfCreatures = getListOfCreatures();
-
-// creating an array of RegExp for creatures segments
-let regArr = [];
-listOfCreatures.forEach(e => regArr.push(new RegExp(`\n${e}\n`)));
-
-// function to get Creature's name
-let getCreatureName = (regExp) => regExp.toString().replace(/\/|\\n|\\s|\*|\\/g, "");
-
-let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n|\\s|\*/g, "");
-
-
-//function to get Next creature RegExp
+export let parseCreatures=async (input) =>{
+    let sourceText = input ;
+    //remove Name + order
+    let sourceTextMod =""
+    try{
+        if(sourceText.match(/.*\(Order #\d*\)/gm).length <180) {sourceTextMod == null;
+        }else sourceTextMod = sourceText.replace(/.*\(Order #\d*\)/gm,"**********");
+    }catch{
+        console.log("***********************************");
+        console.log("ERROR : your text isn't the right length or isn't legal");
+        console.log("***********************************");
+    }
+    //handeling issue with gear RegEx
+    sourceTextMod = sourceTextMod.replace(/ARMOR\nRATING/,"ARMOR RATING");
+    
+    let getListOfCreatures = () =>{
+        let test = sourceTextMod.match(/(?<=\.\.\.\.5)(.*\n)*?(?=Rarities)/)[0];
+        test = test.replace(/\**/g,"")
+        .replace(/\.*\d+/g,"/").replace(/\(/,"\\(")
+        .replace(/\)/,"\\)")
+        .split("/")
+        .map(e=>e.trim())
+        .filter(e => e !='');
+        return test;
+    } 
+    
+    let listOfCreatures = getListOfCreatures();
+    
+    // creating an array of RegExp for creatures segments
+    let regArr = [];
+    listOfCreatures.forEach(e => regArr.push(new RegExp(`\n${e}\n`)));
+    
+    // function to get Creature's name
+    let getCreatureName = (regExp) => regExp.toString().replace(/\/|\\n|\\s|\*|\\/g, "");
+    
+    let textOfRegExp = (regExp) => regExp.toString().replace(/\/|\\n|\\s|\*/g, "");
+    
+    
+    //function to get Next creature RegExp
 let getNextRegExpCreature = (creatureRegExp) => regArr[regArr.indexOf(creatureRegExp) + 1];
 
 
@@ -53,7 +53,9 @@ let getNextRegExpCreature = (creatureRegExp) => regArr[regArr.indexOf(creatureRe
 let getCreatureText = (creatureRegExp, sourceTextMod) => {
     let start = sourceTextMod.search(creatureRegExp);
     //handeling last creature Case
-    if (regArr.indexOf(creatureRegExp) == listOfCreatures.length - 1) return sourceTextMod.slice(start,sourceTextMod.search("Rarities"));
+    if (regArr.indexOf(creatureRegExp) == listOfCreatures.length - 1) {
+        return sourceTextMod.slice(start,sourceTextMod.search("Rarities\n"));
+    }
     let end = sourceTextMod.search(getNextRegExpCreature(creatureRegExp));
     let resp = sourceTextMod.slice(start, end);
     return resp;
@@ -100,7 +102,7 @@ let getSkills = (txt) => {
         workText = workText.slice(workText.search(new RegExp(skillsNameArr[i], 'i')));
         skills[skillsNameArr[i]] = parseInt(workText.match(/\d+/)[0]);
     }
-
+    
     return skills;
 };
 
@@ -148,13 +150,13 @@ let getGear = (txt) => {
                 resp.push(getGearArmorData(e));
             }else resp.push({name : e.trim(),type:"gear"})
         }
-    ))
-    return resp;
-}
-
-let getGearArmorData = (txt)=>{
-    let armorData={
-        name:"",
+        ))
+        return resp;
+    }
+    
+    let getGearArmorData = (txt)=>{
+        let armorData={
+            name:"",
             type:"",
             data:{
                 bonus: {
@@ -165,78 +167,72 @@ let getGearArmorData = (txt)=>{
         };
         armorData.type = "armor"
         armorData.name = txt.match(/^.*(?=\n*\(ARMOR)/)[0];
-        try{
-            armorData.data.bonus.max= txt.match(/\d+/)[0];
-        }catch{
-            console.log("***** ERROR ****")
-            console.log(txt);
-    }
+        armorData.data.bonus.max= txt.match(/\d+/)[0];
         armorData.data.bonus.value = armorData.data.bonus.max; 
         return armorData;
     }
     
-
-
-//Images fetching
-let getImg = async (name) => {
-    let path = defaultImgPath;
-    await fetch(`${assetsPath}/${name}.png`)
-    .then(res => {
-        if (res.ok) path = `${assetsPath}/${name}.png`;
-        else throw new Error();
-    })
-    .catch((e) => { console.log(`Image de ${name} non trouvée. Chargement de l'image par défaut`) });
-    return path;
-}
-
-let getTokenImg = async (name) => {
-    let tokenPath = defaultImgPath;
-    await fetch(`${assetsPath}/${name} Token.png`)
-    .then(res => {
-        if (res.ok) tokenPath = `${assetsPath}/${name} Token.png`;
-        else throw new Error();
-    })
-    .catch((e) => { console.log(`Image de ${name} non trouvée. Chargement du Token par défaut`) });
-    return tokenPath;
-}
-
-//Get attacks
-
-let getAttacks = async (txt) => {
-    txt = txt.slice(txt.search(/ATTACK|ABILITY/m));
-    let attackReg = /\d+-*\d* [A-Z\s-]{2,}(:|!)(.*\n)*?(?=\d+-*\d*\s[A-Z]{2,}|[A-Z]{2,}\s[A-Z]|\d+\n\*{4}|Chitin Drake)/gm
-    if (txt.search(attackReg) == -1) return null;
-    let attackArr = txt.match(attackReg);
-
-    let resp =[];
-    attackArr = attackArr.filter(e=> e !='');
-    attackArr= attackArr.map(
-        e => {
+    
+    
+    //Images fetching
+    let getImg = async (name) => {
+        let path = defaultImgPath;
+        await fetch(`${assetsPath}/${name}.png`)
+        .then(res => {
+            if (res.ok) path = `${assetsPath}/${name}.png`;
+            else throw new Error();
+        })
+        .catch((e) => { console.log(`Image de ${name} non trouvée. Chargement de l'image par défaut`) });
+        return path;
+    }
+    
+    let getTokenImg = async (name) => {
+        let tokenPath = defaultImgPath;
+        await fetch(`${assetsPath}/${name} Token.png`)
+        .then(res => {
+            if (res.ok) tokenPath = `${assetsPath}/${name} Token.png`;
+            else throw new Error();
+        })
+        .catch((e) => { console.log(`Image de ${name} non trouvée. Chargement du Token par défaut`) });
+        return tokenPath;
+    }
+    
+    //Get attacks
+    
+    let getAttacks = async (txt) => {
+        txt = txt.slice(txt.search(/ATTACK|ABILITY/m));
+        let attackReg = /\d+-*\d* [A-Z\s-]{2,}(:|!)(.*\n)*?(?=\d+-*\d*\s[A-Z]{2,}|[A-Z]{2,}\s[A-Z]|\d+\n\*{4}|Chitin Drake)/gm
+        if (txt.search(attackReg) == -1) return null;
+        let attackArr = txt.match(attackReg);
+        
+        let resp =[];
+        attackArr = attackArr.filter(e=> e !='');
+        attackArr= attackArr.map(
+            e => {
                 let attackData={
                     name:"",
-                        type:"monsterAttack",
-                        data:{
-                            dice:0,
-                            damage:0,
-                            description:""
-                            }
-                        };
+                    type:"monsterAttack",
+                    data:{
+                        dice:0,
+                        damage:0,
+                        description:""
+                    }
+                };
             
-            attackData.name = e.match(/(?<=\d |\d\d )[A-Z\s]*/)[0];
-            attackData.data.description = e.slice(e.search(attackData.name)+attackData.name.length);
-            if(e.search(/Damage \d/i) !=-1 ){
-                attackData.data.damage = e.match(/(?<=Damage )\d/)[0];
-            } 
-            if(e.search(/\d+(?= Base Dice)/i) != -1 ) attackData.data.dice = e.match(/\d+(?= Base Dice)/)[0];
-        console.log()
-            resp.push(attackData);            
+                attackData.name = e.match(/(?<=\d |\d\d )[A-Z\s]*/)[0];
+                attackData.data.description = e.slice(e.search(attackData.name)+attackData.name.length);
+                if(e.search(/Damage \d/i) !=-1 ){
+                    attackData.data.damage = e.match(/(?<=Damage )\d/)[0];
+                } 
+                if(e.search(/\d+(?= Base Dice)/i) != -1 ) attackData.data.dice = e.match(/\d+(?= Base Dice)/)[0];
+                resp.push(attackData);            
+            }
+            
+            )
+            return resp;
         }
-        
-    )
-    return resp;
-}
-/*
-Main generation of creatures
+        /*
+        Main generation of creatures
 */
 
 //fill textByCreatureArray
@@ -263,7 +259,7 @@ regArr.forEach(async e => {
     let attacks = await getAttacks(text);
     let description = getDescription(text, e);
     let notes = ``;
-
+    
     creatureTable.push({
         text: text.replace(/\d*\n*\*{10}/g,''),
         translatedText: translatedText,
@@ -279,11 +275,12 @@ regArr.forEach(async e => {
         gears: gears,
         attacks : attacks,
         notes: notes
-
+        
     })
 }
 );
-export { creatureTable };
+return await creatureTable ;
+}
 
 
 
