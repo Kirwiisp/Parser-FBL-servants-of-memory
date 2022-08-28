@@ -23,7 +23,7 @@
     "socket": false,
     "url": "https://github.com/Kirwiisp/Parser-FBL-servants-of-memory",
     "manifest": "https://raw.githubusercontent.com/Kirwiisp/Parser-FBL-servants-of-memory/master/module.json",
-    "download": "",
+    "download": "https://github.com/Kirwiisp/Parser-FBL-servants-of-memory/archive/refs/tags/Release.zip",
     "protected": false,
     "coreTranslation": false,
     "library": false
