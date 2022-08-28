@@ -49,7 +49,8 @@ let welcome = async (data) => {
                   label: 'Go',
                   callback: async html =>{
                     let text = await html.find('textarea#text-input').val();
-    let creatureArr = await parseCreatures(text);
+                    let url = await html.find('textarea#url-input').val();
+    let creatureArr = await parseCreatures(text,url);
 setTimeout(()=>{
     console.log("generateActor"),
     generateCreatures(creatureArr)

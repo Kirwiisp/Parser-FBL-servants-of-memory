@@ -1,13 +1,13 @@
 
 let modulePath = `modules/fbl-servants-of-memory-npc-parser`;
-let assetsPath = `${modulePath}/assets`;
-let defaultImgPath = `${assetsPath}/Base Token.png`;
+let defaultImgPath = `systems/forbidden-lands/assets/fbl-monster.webp`;
 
 /*
 Functions 
 */
-export let parseCreatures=async (input) =>{
-    let sourceText = input ;
+export let parseCreatures=async (textInput,urlInput) =>{
+    let sourceText = textInput ;
+    let assetsPath = urlInput;
     //remove Name + order
     let sourceTextMod =""
     try{
@@ -279,6 +279,7 @@ regArr.forEach(async e => {
     })
 }
 );
+console.log(creatureTable);
 return await creatureTable ;
 }
 
