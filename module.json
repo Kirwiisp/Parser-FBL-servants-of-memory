@@ -5,9 +5,8 @@
     "authors": [
         "Kirwiisp"
     ],
-    "url": "https://github.com/Kirwiisp/Parser-FBL-servants-of-mystery",
     "flags": {},
-    "version": "0.0.1",
+    "version": "1.0.0",
     "minimumCoreVersion": "9.000",
     "compatibleCoreVersion": "9.269",
     "scripts": [],
@@ -22,7 +21,8 @@
     ],
     "dependencies": [],
     "socket": false,
-    "manifest": "",
+    "url": "https://github.com/Kirwiisp/Parser-FBL-servants-of-memory",
+    "manifest": "https://raw.githubusercontent.com/Kirwiisp/Parser-FBL-servants-of-memory/master/module.json",
     "download": "",
     "protected": false,
     "coreTranslation": false,

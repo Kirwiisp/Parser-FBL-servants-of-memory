@@ -5,8 +5,9 @@ This module isn't perfect and won't be, you'll still have to fix some mistakes w
 This parser don't creat talents, you'll have to copy them yourself. But when parsed, creatures get there full text in the note field.
 
 **\*** Images **\***
+
 This module doesn't provide any assets for the creatures, but if you still have assets for them, you can add these files
-in the asset folder as follow
+in the asset folder as follow :
 
 - Creature name (as marked in the pdf)
   for portrait : "Creature name.png"
