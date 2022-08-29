@@ -181,31 +181,29 @@ export let parseCreatures = async (textInput, urlInput) => {
     armorData.data.bonus.value = armorData.data.bonus.max;
     return armorData;
   };
+  /*****************
+   * Images
+   ******************/
+  var filesArr = [];
+  await FilePicker.browse("data", assetsPath).then(
+    (res) => (filesArr = res.files)
+  );
+  filesArr = filesArr.map((e) => e.replace(/%20/g, " "));
 
   //Images fetching
   let getImg = async (name) => {
     let path = defaultImgPath;
-    await fetch(`${assetsPath}/${name}.png`)
-      .then((res) => {
-        if (res.ok) path = `${assetsPath}/${name}.png`;
-        else throw new Error();
-      })
-      .catch((e) => {
-        console.log(`Image of ${name} not found. Using default img`);
-      });
+    if (filesArr.includes(`${assetsPath}/${name}.png`)) {
+      path = `${assetsPath}/${name}.png`;
+    } else console.log(`Image of ${name} not found. Using default img`);
     return path;
   };
 
   let getTokenImg = async (name) => {
     let tokenPath = defaultImgPath;
-    await fetch(`${assetsPath}/${name} Token.png`)
-      .then((res) => {
-        if (res.ok) tokenPath = `${assetsPath}/${name} Token.png`;
-        else throw new Error();
-      })
-      .catch((e) => {
-        console.log(`Image of ${name} not found. Using default img`);
-      });
+    if (filesArr.includes(`${assetsPath}/${name} Token.png`)) {
+      tokenPath = `${assetsPath}/${name} Token.png`;
+    } else console.log(`Image of ${name} not found. Using default img`);
     return tokenPath;
   };
 
