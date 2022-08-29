@@ -55,10 +55,12 @@ let welcome = async (data) => {
           label: "Go",
           callback: async (html) => {
             let text = await html.find("textarea#text-input").val();
-            let url = await html.find("textarea#url-input").val();
-            let creatureArr = await parseCreatures(text, url);
+            let path = await html.find("input#url-input").val();
+
+            let creatureArr = await parseCreatures(text, path);
             setTimeout(() => {
-              console.log("generateActor"), generateCreatures(creatureArr);
+              console.log("generateActor");
+              generateCreatures(creatureArr);
             }, 8000);
           },
         },

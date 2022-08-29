@@ -1,16 +1,15 @@
 <form id='text-input-form' class='form-rest'>
   <p>If you have assets for creatures, use the button to define the folder </p>
   <div style="display : flex">
-  <label class='text'>
-    <input type="text" id='url-input' ></input>
-  </label>
+  <input type="text" id='url-input' name="urlPath" value=""></input>
   <script>directory = () => {
     const fp = new FilePicker({
         type: "folder",
         button: "folder-picker",
-        callback: (url) => {
-          $("#url-input").val(url);
+        callback:  (url) => {
+           $("#url-input").val(url);
         }
+
       });
     fp.browse();
   }</script>
