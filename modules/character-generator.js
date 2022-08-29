@@ -98,11 +98,16 @@ let welcome = async (data) => {
 };
 //Creation of Servant of Memory folder
 let createFolder = async () => {
-  console.log("///Folder creaation/////");
-  await Folder.create({
-    name: moduleData.moduleFolderNameDict["Servants of Memory actors"],
-    type: "Actor",
-  });
+  console.log("///Folder creation/////");
+  if (
+    game.folders.getName("Servants of Memory") == undefined ||
+    game.folders.getName("Servants of Memory").data.type != "Actor"
+  ) {
+    await Folder.create({
+      name: moduleData.moduleFolderNameDict["Servants of Memory actors"],
+      type: "Actor",
+    });
+  }
 };
 
 let skillsNameArr = [
