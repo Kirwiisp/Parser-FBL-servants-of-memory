@@ -1,9 +1,23 @@
 <form id='text-input-form' class='form-rest'>
-  <p>If you are using assets, paste the link here : </p>
-  <p>(ex : modules/fbl-servants-of-memory-npc-parser/assets) </p>
+  <p>If you have assets for creatures, use the button to define the folder </p>
+  <div style="display : flex">
   <label class='text'>
-    <textarea id='url-input' rows='1' cols='100'></textarea>
+    <input type="text" id='url-input' ></input>
   </label>
+  <script>directory = () => {
+    const fp = new FilePicker({
+        type: "folder",
+        button: "folder-picker",
+        callback: (url) => {
+          $("#url-input").val(url);
+        }
+      });
+    fp.browse();
+  }</script>
+  <button type="button" class="file-picker" data-type="folder" data-target="url-input" title="Browse folders" tabindex="-1" onclick="directory()">
+    <i class="fas fa-file-import fa-fw"></i>              
+  </button>
+  </div>
   <p>Copy from "Table Of Contents" P.2 to P.191</p>
   <label class='text'>
     <textarea id='text-input' rows='10' cols='100'></textarea>
