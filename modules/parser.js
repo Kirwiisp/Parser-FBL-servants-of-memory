@@ -7,6 +7,10 @@ Functions
 export let parseCreatures = async (textInput, urlInput) => {
   let sourceText = textInput;
   let assetsPath = urlInput;
+  /*
+  Handling assets path for the forge
+  */
+  assetsPath = assetsPath.replace(/https:\/\/assets.forge-vtt.com\/.*?\//g, "");
   //remove Name + order
   let sourceTextMod = "";
   try {

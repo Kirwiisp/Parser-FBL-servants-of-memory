@@ -12,7 +12,6 @@ const moduleData = {
 let createActorButton = () => {
   const actorPanel = document.getElementById("actors");
   const footer = actorPanel.getElementsByClassName("directory-footer")[0];
-  console.log("Creating parser button");
 
   let parserBtn = document.createElement("button");
   parserBtn.innerHTML = `<i  class="fas fa-list"></i>Servants of Memory Parser`;
