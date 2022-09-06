@@ -1,1 +1,0 @@
-export let nomReg = /(?<=\*{9}\n)(?!special)(?!Dradkin Fleshpriest)[A-Z][a-z]+[A-z\,\s]*?(?=\n)|^[A-Z][a-z]+[A-z\,\s]*?(?=\n)|Ant Forager, Blight|Dradkin Fleshpriest(?! Rituals)|(?<=\n)Heelan Phib/gi;
