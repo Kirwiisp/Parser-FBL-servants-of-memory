@@ -3,14 +3,15 @@
   <div style="display : flex">
   <input type="text" id='url-input' name="urlPath" value=""></input>
   <var id="source-input" name="sourceInput" value=""></var>
+  <var id="completePath-input" name="completePathInput" value=""></var>
   <script>directory = () => {
     const fp = new FilePicker({
         type: "folder",
         button: "folder-picker",
         callback:  (url,source) => {
            $("#url-input").val(url);
+           $("#completePath-input").val(source.result.target);
            $("#source-input").val(source.activeSource);
-           console.log(document.getElementById("source-input").value);
         }
       });
     fp.browse();
