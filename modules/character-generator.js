@@ -1,230 +1,223 @@
-import { creatureTable } from './parser.js'
+import { parseCreatures } from "./parser.js";
 
-creatureTable.forEach(e => {
-    let actor = await Actor.create({
-        name: e.name,
-        type: "monster",
-        img: e.img,
-        data: {
-            "attribute": {
-                "strength": {
-                    "label": "ATTRIBUTE.STRENGTH",
-                    "value": e.attribute.strength,
-                    "min": 0,
-                    "max": e.attribute.strength
-                },
-                "agility": {
-                    "label": "ATTRIBUTE.AGILITY",
-                    "value": e.attribute.agility,
-                    "min": 0,
-                    "max": e.attribute.agility
-                },
-                "wits": {
-                    "label": "ATTRIBUTE.WITS",
-                    "value": e.attribute.wits,
-                    "min": 0,
-                    "max": e.attribute.wits
-                },
-                "empathy": {
-                    "label": "ATTRIBUTE.EMPATHY",
-                    "value": e.attribute.empathy,
-                    "min": 0,
-                    "max": e.attribute.empathy
-                }
-            },
-            "skill": {
-                "might": {
-                    "label": "SKILL.MIGHT",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "strength"
-                },
-                "endurance": {
-                    "label": "SKILL.ENDURANCE",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "strength"
-                },
-                "melee": {
-                    "label": "SKILL.MELEE",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "strength"
-                },
-                "crafting": {
-                    "label": "SKILL.CRAFTING",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "strength"
-                },
-                "stealth": {
-                    "label": "SKILL.STEALTH",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "agility"
-                },
-                "sleight-of-hand": {
-                    "label": "SKILL.SLEIGHT_OF_HAND",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "agility"
-                },
-                "move": {
-                    "label": "SKILL.MOVE",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "agility"
-                },
-                "marksmanship": {
-                    "label": "SKILL.MARKSMANSHIP",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "agility"
-                },
-                "scouting": {
-                    "label": "SKILL.SCOUTING",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "wits"
-                },
-                "lore": {
-                    "label": "SKILL.LORE",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "wits"
-                },
-                "survival": {
-                    "label": "SKILL.SURVIVAL",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "wits"
-                },
-                "insight": {
-                    "label": "SKILL.INSIGHT",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "wits"
-                },
-                "manipulation": {
-                    "label": "SKILL.MANIPULATION",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "empathy"
-                },
-                "performance": {
-                    "label": "SKILL.PERFORMANCE",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "empathy"
-                },
-                "healing": {
-                    "label": "SKILL.HEALING",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "empathy"
-                },
-                "animal-handling": {
-                    "label": "SKILL.ANIMAL_HANDLING",
-                    "value": 0,
-                    "min": 0,
-                    "attribute": "empathy"
-                }
-            },
-            "movement": {
-                "label": "MOVEMENT",
-                "value": 1
-            },
-            "armor": {
-                "label": "MONSTER.ARMOR",
-                "value": 0
-            },
-            "isMounted": false,
-            "type": "monster",
-            "bio": {
-                "note": {
-                    "value": "<p>zone text</p>\n<p>zon</p>"
-                }
-            }
+const moduleData = {
+  moduleFlag: "servants-of-memory-parser",
+  moduleKey: "fbl-servants-of-memory-npc-parser",
+  moduleTitle: "FBL The Servants of Memory NPC Parser",
+  moduleFolderNameDict: {
+    "Servants of Memory actors": "Servants of Memory",
+  },
+};
+// directory-footer action-buttons
+let createActorButton = () => {
+  const actorPanel = document.getElementById("actors");
+  const footer = actorPanel.getElementsByClassName("directory-footer")[0];
+
+  let parserBtn = document.createElement("button");
+  parserBtn.innerHTML = `<i  class="fas fa-list"></i>Servants of Memory Parser`;
+
+  // add eventlistenner
+  parserBtn.addEventListener("click", () => {
+    welcome(moduleData);
+  });
+
+  const createEntityButton = footer.getElementsByClassName("create-entity")[0];
+  footer.insertBefore(parserBtn, createEntityButton);
+};
+
+// class required by the registerMenu method.
+class ImportFormWrapper extends FormApplication {
+  render() {
+    if (!game?.data)
+      return ui.notifications.error(
+        "Can't access game version, be careful with importing content."
+      );
+    if (game.data?.version > "0.7.9")
+      return ModuleImport.filterDialog(moduleData);
+    return ui.notifications.warn(
+      "This version of the core module is not compatible with 0.7.9"
+    );
+  }
+}
+let welcome = async (data) => {
+  let inputDialog = async () => {
+    let hbs = await renderTemplate(
+      `modules/${data.moduleKey}/templates/text-input.hbs`,
+      {}
+    );
+    const dialogInput = new Dialog({
+      title: "Copy text form Servants of memory",
+      content: hbs,
+      buttons: {
+        go: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "Go",
+          callback: async (html) => {
+            let text = await html.find("textarea#text-input").val();
+            let path = await html.find("input#url-input").val();
+            let sourceInput = await html.find("#source-input").val();
+
+            let creatureArr = await parseCreatures(text, path, sourceInput);
+            setTimeout(() => {
+              console.log("generateActor");
+              generateCreatures(creatureArr);
+            }, 8000);
+          },
         },
-        "token": {
-            "name": "*TestDev",
-            "img": "systems/forbidden-lands/assets/fbl-monster.webp",
-            "displayName": 0,
-            "actorLink": false,
-            "width": 1,
-            "height": 1,
-            "scale": 1,
-            "mirrorX": false,
-            "mirrorY": false,
-            "lockRotation": false,
-            "rotation": 0,
-            "alpha": 1,
-            "vision": false,
-            "dimSight": 0,
-            "brightSight": 0,
-            "sightAngle": 0,
-            "light": {
-                "alpha": 0.5,
-                "angle": 0,
-                "bright": 0,
-                "coloration": 1,
-                "dim": 0,
-                "gradual": true,
-                "luminosity": 0.5,
-                "saturation": 0,
-                "contrast": 0,
-                "shadows": 0,
-                "animation": {
-                    "speed": 5,
-                    "intensity": 5,
-                    "reverse": false
-                },
-                "darkness": {
-                    "min": 0,
-                    "max": 1
-                }
-            },
-            "disposition": -1,
-            "displayBars": 0,
-            "bar1": {
-                "attribute": null
-            },
-            "bar2": {
-                "attribute": null
-            },
-            "flags": {},
-            "randomImg": false
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel",
+          callback: () => console.log("Chose cancel"),
         },
-        "items": [
-            {
-                "_id": "hyZ2p3xoftNQRTPv",
-                "name": "New Talent",
-                "type": "talent",
-                "img": "icons/svg/item-bag.svg",
-                "data": {
-                    "rollModifiers": {},
-                    "type": "general",
-                    "rank": "1",
-                    "description": ""
-                },
-                "effects": [],
-                "folder": null,
-                "sort": 0,
-                "permission": {
-                    "default": 0,
-                    "SP8MEhsAcRpmUaO1": 3
-                },
-                "flags": {}
-            }
-        ],
-        "effects": [],
-        "folder": null,
-        "sort": 0,
-        "permission": {
-            "default": 0,
-            "SP8MEhsAcRpmUaO1": 3
-        },
-        "flags": {}
+      },
     });
+    dialogInput.render(true);
+  };
+  //game.settings.set(data.moduleKey, "initialized", true);
+  const dialog = new Dialog({
+    title: `Import ${data.moduleTitle}`,
+    content: await getTemplate(
+      `modules/${data.moduleKey}/templates/import.html`
+    ),
+    buttons: {
+      initialize: {
+        label: "Begin!",
+        callback: async () => {
+          await createFolder();
+          inputDialog();
+        },
+      },
 
-})
+      cancel: {
+        label: "Cancel",
+        callback: () => console.log("import cancel"),
+      },
+    },
+  });
+  dialog.render(true);
+};
+//Creation of Servant of Memory folder
+let createFolder = async () => {
+  console.log("///Folder creation/////");
+  if (
+    game.folders.getName("Servants of Memory") == undefined ||
+    game.folders.getName("Servants of Memory").data.type != "Actor"
+  ) {
+    await Folder.create({
+      name: moduleData.moduleFolderNameDict["Servants of Memory actors"],
+      type: "Actor",
+    });
+  }
+};
+
+let skillsNameArr = [
+  "might",
+  "endure",
+  "melee",
+  "crafting",
+  "stealth",
+  "sleight-of-hand",
+  "move",
+  "marksmanship",
+  "scout",
+  "scouting",
+  "lore",
+  "survive",
+  "insight",
+  "manipulate",
+  "performance",
+  "healing",
+  "animal",
+];
+let generateCreatures = (creatureTable) => {
+  creatureTable.forEach(async (creature) => {
+    let actor = await Actor.create({
+      name: creature.name,
+      type: "monster",
+      folder: game.folders.getName(
+        moduleData.moduleFolderNameDict["Servants of Memory actors"]
+      ),
+      img: creature.img,
+      data: {
+        attribute: {
+          strength: {
+            value: creature.attributes.strength,
+            max: creature.attributes.strength,
+          },
+          agility: {
+            value: creature.attributes.agility,
+            max: creature.attributes.agility,
+          },
+          wits: {
+            value: creature.attributes.wits,
+            max: creature.attributes.wits,
+          },
+          empathy: {
+            value: creature.attributes.empathy,
+            max: creature.attributes.empathy,
+          },
+        },
+        movement: { value: creature.movement },
+        armor: {
+          value: creature.armor,
+        },
+        bio: {
+          note: {
+            value: creature.text,
+          },
+        },
+      },
+      token: {
+        name: creature.name,
+        img: creature.imgToken,
+      },
+    });
+    //update skills if specified
+    if (creature.skills) {
+      skillsNameArr.forEach((i) => {
+        if (creature.skills.hasOwnProperty(i)) {
+          let skillToFill = `data.skill.${i}.value`;
+          //handeling  exceptions
+          if (i == "animal") {
+            skillToFill = `data.skill.animal-handling.value`;
+          }
+          if (i == "scout") {
+            skillToFill = "data.skill.scouting.value";
+          }
+          if (i == "manipulate") {
+            skillToFill = "data.skill.manipulation.value";
+          }
+          if (i == "survive") {
+            skillToFill = "data.skill.survival.value";
+          }
+          if (i == "endure") {
+            skillToFill = "data.skill.endurance.value";
+          }
+
+          actor.update({ [skillToFill]: creature.skills[i] });
+        }
+      });
+    }
+
+    //update gears
+
+    if (creature.gears) {
+      creature.gears.forEach(async (e) =>
+        actor.createEmbeddedDocuments("Item", [e])
+      );
+    }
+    //update attacks
+
+    if (creature.attacks) {
+      creature.attacks.forEach(async (e) =>
+        actor.createEmbeddedDocuments("Item", [e])
+      );
+    }
+  });
+};
+
+Hooks.on("renderSidebarTab", (app, html) => {
+  if (app.options.id == "actors") {
+    createActorButton();
+  }
+});

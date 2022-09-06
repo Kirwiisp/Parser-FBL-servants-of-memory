@@ -1,0 +1,26 @@
+<form id='text-input-form' class='form-rest'>
+  <p>If you have assets for creatures, use the button to define the folder </p>
+  <div style="display : flex">
+  <input type="text" id='url-input' name="urlPath" value=""></input>
+  <var id="source-input" name="sourceInput" value=""></var>
+  <script>directory = () => {
+    const fp = new FilePicker({
+        type: "folder",
+        button: "folder-picker",
+        callback:  (url,source) => {
+           $("#url-input").val(url);
+           $("#source-input").val(source.activeSource);
+        }
+      });
+    fp.browse();
+
+  }</script>
+  <button type="button" class="file-picker" data-type="folder" data-target="url-input" title="Browse folders" tabindex="-1" onclick="directory()">
+    <i class="fas fa-file-import fa-fw"></i>              
+  </button>
+  </div>
+  <p>Paste the text from the pdf<p>
+  <label class='text'>
+    <textarea id='text-input' rows='10' cols='100'></textarea>
+  </label>
+</form>
