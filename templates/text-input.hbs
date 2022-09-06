@@ -10,6 +10,7 @@
         callback:  (url,source) => {
            $("#url-input").val(url);
            $("#source-input").val(source.activeSource);
+           console.log(document.getElementById("source-input").value);
         }
       });
     fp.browse();
