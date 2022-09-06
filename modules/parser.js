@@ -4,11 +4,17 @@ let defaultImgPath = `systems/forbidden-lands/assets/fbl-monster.webp`;
 /*
 Functions 
 */
-export let parseCreatures = async (textInput, urlInput, sourceInput) => {
+export let parseCreatures = async (
+  textInput,
+  urlInput,
+  completePath,
+  sourceInput
+) => {
   let sourceText = textInput.match(
     /Table of Contents(.*\n)*Open Game License v1.0a/
   )[0];
   let assetsPath = urlInput;
+  let assetsCompletePath = completePath;
   let sourcePath = sourceInput;
 
   //remove Name + order
@@ -198,7 +204,7 @@ export let parseCreatures = async (textInput, urlInput, sourceInput) => {
   let getImg = async (name) => {
     let path = defaultImgPath;
     if (filesArr.includes(`${assetsPath}/${name}.png`)) {
-      path = `${assetsPath}/${name}.png`;
+      path = `${assetsCompletePath}/${name}.png`;
     } else console.log(`Image of ${name} not found. Using default img`);
     return path;
   };
@@ -206,7 +212,7 @@ export let parseCreatures = async (textInput, urlInput, sourceInput) => {
   let getTokenImg = async (name) => {
     let tokenPath = defaultImgPath;
     if (filesArr.includes(`${assetsPath}/${name} Token.png`)) {
-      tokenPath = `${assetsPath}/${name} Token.png`;
+      tokenPath = `${assetsCompletePath}/${name} Token.png`;
     } else console.log(`Image of ${name} not found. Using default img`);
     return tokenPath;
   };
