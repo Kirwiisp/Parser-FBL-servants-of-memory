@@ -4,7 +4,6 @@ let defaultImgPath = `systems/forbidden-lands/assets/fbl-monster.webp`;
 /*
 Functions 
 */
-<<<<<<< HEAD
 export let parseCreatures = async (textInput, urlInput, sourceInput) => {
   let sourceText = textInput.match(
     /Table of Contents(.*\n)*Open Game License v1.0a/
@@ -57,60 +56,6 @@ export let parseCreatures = async (textInput, urlInput, sourceInput) => {
   let getNextRegExpCreature = (creatureRegExp) =>
     regArr[regArr.indexOf(creatureRegExp) + 1];
 
-=======
-export let parseCreatures = async (textInput, urlInput) => {
-  let sourceText = textInput;
-  let assetsPath = urlInput;
-  /*
-  Handling assets path for the forge
-  */
-  assetsPath = assetsPath.replace(/https:\/\/assets.forge-vtt.com\/.*?\//g, "");
-  //remove Name + order
-  let sourceTextMod = "";
-  try {
-    if (sourceText.match(/.*\(Order #\d*\)/gm).length < 180) {
-      sourceTextMod == null;
-    } else
-      sourceTextMod = sourceText.replace(/.*\(Order #\d*\)/gm, "**********");
-  } catch {
-    console.log("***********************************");
-    console.log("ERROR : your text isn't the right length or isn't legal");
-    console.log("***********************************");
-  }
-  //handeling issue with gear RegEx
-  sourceTextMod = sourceTextMod.replace(/ARMOR\nRATING/, "ARMOR RATING");
-
-  let getListOfCreatures = () => {
-    let test = sourceTextMod.match(/(?<=\.\.\.\.5)(.*\n)*?(?=Rarities)/)[0];
-    test = test
-      .replace(/\**/g, "")
-      .replace(/\.*\d+/g, "/")
-      .replace(/\(/, "\\(")
-      .replace(/\)/, "\\)")
-      .split("/")
-      .map((e) => e.trim())
-      .filter((e) => e != "");
-    return test;
-  };
-
-  let listOfCreatures = getListOfCreatures();
-
-  // creating an array of RegExp for creatures segments
-  let regArr = [];
-  listOfCreatures.forEach((e) => regArr.push(new RegExp(`\n${e}\n`)));
-
-  // function to get Creature's name
-  let getCreatureName = (regExp) =>
-    regExp.toString().replace(/\/|\\n|\\s|\*|\\/g, "");
-
-  let textOfRegExp = (regExp) =>
-    regExp.toString().replace(/\/|\\n|\\s|\*/g, "");
-
-  //function to get Next creature RegExp
-  let getNextRegExpCreature = (creatureRegExp) =>
-    regArr[regArr.indexOf(creatureRegExp) + 1];
-
->>>>>>> bcddcdb534d29bfa097a621065212bed80d0dfcd
   //function to get creature text
   let getCreatureText = (creatureRegExp, sourceTextMod) => {
     let start = sourceTextMod.search(creatureRegExp);
@@ -244,11 +189,7 @@ export let parseCreatures = async (textInput, urlInput) => {
    * Images
    ******************/
   var filesArr = [];
-<<<<<<< HEAD
   await FilePicker.browse(sourcePath, assetsPath).then(
-=======
-  await FilePicker.browse("data", assetsPath).then(
->>>>>>> bcddcdb534d29bfa097a621065212bed80d0dfcd
     (res) => (filesArr = res.files)
   );
   filesArr = filesArr.map((e) => e.replace(/%20/g, " "));
