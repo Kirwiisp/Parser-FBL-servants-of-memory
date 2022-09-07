@@ -55,15 +55,9 @@ let welcome = async (data) => {
           callback: async (html) => {
             let text = await html.find("textarea#text-input").val();
             let path = await html.find("input#url-input").val();
-            let completePath = await html.find("#completePath-input").val();
             let sourceInput = await html.find("#source-input").val();
 
-            let creatureArr = await parseCreatures(
-              text,
-              path,
-              completePath,
-              sourceInput
-            );
+            let creatureArr = await parseCreatures(text, path, sourceInput);
             setTimeout(() => {
               console.log("generateActor");
               generateCreatures(creatureArr);
