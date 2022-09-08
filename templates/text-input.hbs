@@ -1,17 +1,19 @@
 <form id='text-input-form' class='form-rest'>
   <p>If you have assets for creatures, use the button to define the folder </p>
   <div style="display : flex">
-  <input type="text" id='url-input' name="urlPath" value=""></input>
-  <var id="source-input" name="sourceInput" value=""></var>
-  <var id="completePath-input" name="completePathInput" value=""></var>
-  <script>directory = () => {
+  <input type="text" id='url-input' name="urlPath" value="" placeholder="path of your asset's folder"></input>
+  <var id="source-input" value=""></var>
+  <script>
+    document.getElementById("source-input").value ="data";
+    directory = () => {
     const fp = new FilePicker({
         type: "folder",
         button: "folder-picker",
         callback:  (url,source) => {
+          if(url != null && source != null){
            $("#url-input").val(url);
-           $("#completePath-input").val(source.result.target);
            $("#source-input").val(source.activeSource);
+          }
         }
       });
     fp.browse();
